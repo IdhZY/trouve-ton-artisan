@@ -4,12 +4,16 @@ require("dotenv").config();
 
 const { sequelize } = require("./models");
 const artisansRouter = require("./routes/artisan");
+const apiKeyAuth = require("./middleware/auth");
 
 const app = express();
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(apiKeyAuth);
 
+// Routes
 app.use("/api/artisans", artisansRouter);
 
 const PORT = process.env.PORT || 3000;
