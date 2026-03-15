@@ -1,0 +1,26 @@
+// Couleurs charte graphique
+$color-light-blue: #f1f8fc;
+$color-primary: #0074c7;
+$color-dark-blue: #00497c;
+$color-dark: #384050;
+$color-red: #cd2c2e;
+$color-green: #82b864;
+
+// Breakpoints (mobile first)
+$bp-tablet: 768px;
+$bp-desktop: 1024px;
+
+// Mixins
+@mixin tablet {
+  @media (min-width: $bp-tablet) {
+    @content;
+  }
+}
+@mixin desktop {
+  @media (min-width: $bp-desktop) {
+    @content;
+  }
+}
+
+// Typographie
+$font-primary: "Graphik", sans-serif;

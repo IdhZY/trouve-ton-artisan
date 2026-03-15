@@ -1,0 +1,15 @@
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: 'Helvetica Neue', Arial, sans-serif; color: #384050; background: #fff; }
+a { color: #0074c7; text-decoration: none; }
+main { min-height: 60vh; background-color: #f1f8fc; }
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: 0.75rem 1.25rem;
+  background: #0074c7;
+  color: #fff;
+  font-weight: 600;
+  z-index: 9999;
+  &:focus { top: 0; }
+}
