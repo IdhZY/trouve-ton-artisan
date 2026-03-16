@@ -9,8 +9,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 2rem;
     gap: 1rem;
+    @media (max-width: 767px) {
+      padding: 0.75rem 1rem;
+    }
   }
 
   &__logo {
@@ -33,12 +36,23 @@
     color: #0074c7;
   }
 
+  // ── Zone centrale : nav + search sur desktop ──
+  &__center {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 2rem;
+    justify-content: flex-end;
+  }
+
   &__search-wrapper {
     display: none;
-    flex: 1;
-    max-width: 320px;
+    max-width: 280px;
+    width: 100%;
     position: relative;
-    @media (min-width: 768px) { display: block; }
+    @media (min-width: 768px) {
+      display: block;
+    }
   }
 
   &__search {
@@ -47,7 +61,9 @@
     border-radius: 4px;
     overflow: hidden;
     background: #fff;
-    &:focus-within { border-color: #0074c7; }
+    &:focus-within {
+      border-color: #0074c7;
+    }
   }
 
   &__search-input {
@@ -57,7 +73,9 @@
     padding: 0.45rem 0.75rem;
     font-size: 0.875rem;
     min-width: 0;
-    &::-webkit-search-cancel-button { display: none; }
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
   }
 
   &__search-btn {
@@ -68,7 +86,9 @@
     color: #384050;
     display: flex;
     align-items: center;
-    &:hover { color: #0074c7; }
+    &:hover {
+      color: #0074c7;
+    }
   }
 
   &__search-dropdown {
@@ -79,7 +99,7 @@
     background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 4px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     list-style: none;
     margin: 0;
     padding: 0.25rem 0;
@@ -102,7 +122,9 @@
     display: flex;
     flex-direction: column;
     gap: 0.15rem;
-    &:hover { background-color: #f1f8fc; }
+    &:hover {
+      background-color: #f1f8fc;
+    }
   }
 
   &__search-result-name {
@@ -125,7 +147,9 @@
     cursor: pointer;
     padding: 0.5rem;
     flex-shrink: 0;
-    @media (min-width: 768px) { display: none; }
+    @media (min-width: 768px) {
+      display: none;
+    }
   }
 
   &__burger-bar {
@@ -134,32 +158,60 @@
     height: 2px;
     background-color: #384050;
     border-radius: 2px;
-    transition: transform 0.25s ease, opacity 0.25s ease;
+    transition:
+      transform 0.25s ease,
+      opacity 0.25s ease;
     transform-origin: center;
   }
 
   &__burger--open {
-    .site-header__burger-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .site-header__burger-bar:nth-child(2) { opacity: 0; }
-    .site-header__burger-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .site-header__burger-bar:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .site-header__burger-bar:nth-child(2) {
+      opacity: 0;
+    }
+    .site-header__burger-bar:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
   }
 
+  // ── Nav sur desktop : inline dans le __top ──
   &__nav {
-    border-top: 1px solid rgba(0,0,0,0.1);
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-    &--open { max-height: 400px; }
-    @media (min-width: 768px) { max-height: none; overflow: visible; }
+    // Mobile : menu déroulant sous le header
+    @media (max-width: 767px) {
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+
+      &--open {
+        max-height: 400px;
+      }
+    }
+
+    // Desktop : dans la ligne du header
+    @media (min-width: 768px) {
+      display: flex;
+      align-items: center;
+      margin-right: auto;
+    }
   }
 
   &__nav-list {
     display: flex;
-    flex-direction: column;
     list-style: none;
     margin: 0;
     padding: 0;
-    @media (min-width: 768px) { flex-direction: row; padding: 0 1rem; }
+
+    @media (max-width: 767px) {
+      flex-direction: column;
+    }
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      gap: 0;
+    }
   }
 
   &__nav-link {
@@ -170,7 +222,12 @@
     color: #384050;
     text-decoration: none;
     white-space: nowrap;
-    &:hover { color: #0074c7; }
-    @media (min-width: 768px) { padding: 0.65rem 1rem; }
+    &:hover {
+      color: #0074c7;
+    }
+
+    @media (min-width: 768px) {
+      padding: 0.5rem 1rem;
+    }
   }
 }

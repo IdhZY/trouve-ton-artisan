@@ -1,0 +1,184 @@
+.home {
+  padding: 1rem 0 3rem;
+
+  &__container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    @media (min-width: 768px) {
+      padding: 0 1.5rem;
+    }
+    @media (min-width: 1024px) {
+      padding: 0 2rem;
+    }
+  }
+
+  &__title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0074c7;
+    text-align: center;
+    text-decoration: underline;
+    margin: 1.5rem 0 2.5rem;
+    @media (min-width: 768px) {
+      font-size: 2.5rem;
+    }
+  }
+
+  &__etapes {
+    margin-bottom: 3rem;
+  }
+
+  &__etapes-titre {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #384050;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    @media (min-width: 768px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  &__etapes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  &__etape-card {
+    background-color: #0074c7;
+    color: #fff;
+    border-radius: 4px;
+    padding: 1.25rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__etape-num {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  &__etape-texte {
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  &__artisans {
+    margin-bottom: 2rem;
+  }
+
+  &__artisans-titre {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #384050;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    @media (min-width: 768px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  &__artisans-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  &__loading {
+    text-align: center;
+    color: #9ca3af;
+    margin-bottom: 1rem;
+  }
+  &__error {
+    text-align: center;
+    color: #cd2c2e;
+    margin-bottom: 1rem;
+  }
+}
+
+.artisan-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  color: #384050;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  .artisan-card__nom {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+    color: #384050;
+    text-align: center;
+  }
+
+  .artisan-card__specialite {
+    font-size: 0.85rem;
+    color: #0074c7;
+    margin: 0;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .artisan-card__localisation {
+    font-size: 0.8rem;
+    color: #384050;
+    margin: 0.25rem 0 0;
+    text-align: center;
+  }
+}
+
+.artisan-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  transform: translateY(-2px);
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  font-size: 1.1rem;
+}
+
+.star--full {
+  color: #f59e0b;
+}
+.star--empty {
+  color: #e5e7eb;
+}
+
+.breadcrumb {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.breadcrumb a {
+  color: #9ca3af;
+  text-decoration: underline;
+}
+
+.breadcrumb a:hover {
+  color: #0074c7;
+}
