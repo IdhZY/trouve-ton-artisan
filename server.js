@@ -16,7 +16,7 @@ app.use("/api/artisans", artisansRouter);
 const PORT = process.env.PORT || 3000;
 
 // Démarrer le serveur immédiatement
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, () => {
   console.log(`🚀 Serveur lancé sur le port ${PORT}`);
 });
 
