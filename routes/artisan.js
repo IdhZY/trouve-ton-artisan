@@ -2,9 +2,19 @@ const express = require("express");
 const router = express.Router();
 const { Op } = require("sequelize");
 const nodemailer = require("nodemailer");
+const rateLimit = require("express-rate-limit");
 const Artisan = require("../models/artisan");
 const Categorie = require("../models/categorie");
 const Specialite = require("../models/specialite");
+
+// Limite : 5 requêtes par IP toutes les 15 minutes sur le formulaire de contact
+const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Trop de tentatives, réessayez dans 15 minutes." },
+});
 
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
@@ -74,7 +84,7 @@ router.get("/recherche/:nom", async (req, res) => {
 });
 
 // POST /api/artisans/:id/contact
-router.post("/:id/contact", async (req, res) => {
+router.post("/:id/contact", contactLimiter, async (req, res) => {
   try {
     const { nom, email, objet, message } = req.body;
 
