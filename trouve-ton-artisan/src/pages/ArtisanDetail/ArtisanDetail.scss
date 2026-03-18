@@ -1,0 +1,269 @@
+.artisan-detail {
+  padding: 1rem 0 3rem;
+
+  &__container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    @media (min-width: 768px) {
+      padding: 0 1.5rem;
+    }
+    @media (min-width: 1024px) {
+      padding: 0 2rem;
+    }
+  }
+
+  &__loading,
+  &__error {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1rem;
+    color: #9ca3af;
+  }
+  &__error {
+    color: #cd2c2e;
+  }
+
+  // ── Card identité (bleue) ──
+  &__identity {
+    background-color: #0074c7;
+    border-radius: 8px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  &__photo {
+    flex-shrink: 0;
+  }
+
+  &__photo-placeholder {
+    width: 140px;
+    height: 140px;
+    background-color: #d1d5db;
+    border-radius: 12px;
+    @media (min-width: 768px) {
+      width: 160px;
+      height: 160px;
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    @media (min-width: 768px) {
+      align-items: flex-start;
+    }
+  }
+
+  &__nom {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    text-align: center;
+    @media (min-width: 768px) {
+      font-size: 2rem;
+      text-align: left;
+    }
+  }
+
+  &__specialite {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+  }
+
+  &__ville {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+  }
+
+  &__site {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    &:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+  }
+
+  // ── Card bas (sombre) : à propos + contact ──
+  &__bottom {
+    background-color: #00497c;
+    border-radius: 8px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    @media (min-width: 768px) {
+      flex-direction: row;
+      gap: 0;
+    }
+  }
+
+  &__apropos {
+    flex: 1;
+    @media (min-width: 768px) {
+      padding-right: 2rem;
+    }
+  }
+
+  &__apropos-titre {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 1rem;
+  }
+
+  &__apropos-texte {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.7;
+    margin: 0;
+    text-align: center;
+    @media (min-width: 768px) {
+      text-align: left;
+    }
+  }
+
+  &__divider {
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.3);
+    display: none;
+    @media (min-width: 768px) {
+      display: block;
+      margin: 0 2rem;
+    }
+  }
+
+  &__contact {
+    flex: 1;
+  }
+
+  &__contact-titre {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 1rem;
+    text-align: center;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__input {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.875rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: #384050;
+    box-sizing: border-box;
+    outline: none;
+    &:focus {
+      border-color: #fff;
+    }
+    &::placeholder {
+      color: #9ca3af;
+    }
+  }
+
+  &__textarea {
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 0.65rem 0.75rem;
+    font-size: 0.875rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: #384050;
+    box-sizing: border-box;
+    outline: none;
+    resize: vertical;
+    font-family: inherit;
+    &:focus {
+      border-color: #fff;
+    }
+    &::placeholder {
+      color: #9ca3af;
+    }
+  }
+
+  &__btn {
+    background-color: #0074c7;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0.75rem 2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: center;
+    transition: background-color 0.2s ease;
+    &:hover {
+      background-color: #005fa3;
+    }
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  // #2e7d32 sur fond #00497c = ratio ~4.84:1 (WCAG AA ✓)
+  &__form-success {
+    color: #2e7d32;
+    font-size: 0.875rem;
+    text-align: center;
+    margin: 0;
+  }
+
+  &__form-error {
+    color: #cd2c2e;
+    font-size: 0.875rem;
+    text-align: center;
+    margin: 0;
+  }
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  font-size: 1.2rem;
+}
+
+.star--full {
+  color: #f59e0b;
+}
+.star--empty {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+// Surcharge du margin pour la page détail
+.breadcrumb { margin-bottom: 1rem; }

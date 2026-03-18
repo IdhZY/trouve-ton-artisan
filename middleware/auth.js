@@ -1,5 +1,10 @@
 require("dotenv").config();
 
+/**
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
 const apiKeyAuth = (req, res, next) => {
   const apiKey = req.headers["x-api-key"];
 
