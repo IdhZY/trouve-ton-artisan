@@ -12,6 +12,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://trouve-ton-artisan-liart.vercel.app",
+      "https://my-project-pi-neon.vercel.app",
     ],
   }),
 );
