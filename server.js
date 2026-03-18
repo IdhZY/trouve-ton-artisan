@@ -2,12 +2,20 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const { sequelize } = require("./models");
-const artisansRouter = require("./routes/RoutesArtisan");
+const artisansRouter = require("./routes/artisan");
 const apiKeyAuth = require("./middleware/auth");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://trouve-ton-artisan-liart.vercel.app",
+      "https://my-project-pi-neon.vercel.app",
+    ],
+  }),
+);
 app.use(express.json());
 app.use(apiKeyAuth);
 

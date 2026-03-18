@@ -11,12 +11,24 @@ function Header() {
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
   const debounceRef = useRef(null);
+  const searchWrapperRef = useRef(null);
 
   useEffect(() => {
     fetchCategories()
       .then((data) => setCategories(data))
       .catch((err) => console.error("Erreur catégories :", err));
   }, []);
+
+  useEffect(() => {
+    if (!showDropdown) return;
+    const handleClickOutside = (e) => {
+      if (searchWrapperRef.current && !searchWrapperRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showDropdown]);
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -91,7 +103,7 @@ function Header() {
         </nav>
 
         {/* Search desktop */}
-        <div className="site-header__search-wrapper">
+        <div className="site-header__search-wrapper" ref={searchWrapperRef}>
           <form
             className="site-header__search"
             onSubmit={handleSearchSubmit}
@@ -155,6 +167,7 @@ function Header() {
 
         {/* Burger mobile */}
         <button
+          type="button"
           className={
             "site-header__burger" +
             (menuOpen ? " site-header__burger--open" : "")
