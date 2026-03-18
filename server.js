@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const { sequelize } = require("./models");
-const artisansRouter = require("./routes/RoutesArtisan");
+const artisansRouter = require("./routes/artisan");
 const apiKeyAuth = require("./middleware/auth");
 
 const app = express();
