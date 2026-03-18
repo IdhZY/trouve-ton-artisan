@@ -3,12 +3,14 @@ import { Link, useParams } from "react-router-dom";
 import { fetchArtisan, sendContactForm } from "../../services/api";
 import "./ArtisanDetail.scss";
 
+// role="img" + aria-hidden sur les ★ pour éviter la lecture "étoile noire x5" par les screen readers
 function StarRating({ note }) {
   return (
-    <div className="stars" aria-label={"Note : " + note + " sur 5"}>
+    <div className="stars" role="img" aria-label={"Note : " + note + " sur 5"}>
       {[1, 2, 3, 4, 5].map((i) => (
         <span
           key={i}
+          aria-hidden="true"
           className={
             i <= Math.round(note) ? "star star--full" : "star star--empty"
           }
@@ -41,6 +43,15 @@ function ArtisanDetail() {
       .catch(() => setError("Artisan introuvable."))
       .finally(() => setLoading(false));
   }, [id]);
+
+  // Titre dynamique de page (WCAG 2.4.2)
+  useEffect(() => {
+    if (artisan) {
+      document.title = artisan.nom + " — Trouve ton Artisan";
+    } else if (error) {
+      document.title = "Artisan introuvable — Trouve ton Artisan";
+    }
+  }, [artisan, error]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -86,14 +97,9 @@ function ArtisanDetail() {
 
         {/* Card identité */}
         <div className="artisan-detail__identity">
-          <div
-            className="artisan-detail__photo"
-            aria-label="Photo de l'artisan"
-          >
-            <div
-              className="artisan-detail__photo-placeholder"
-              aria-hidden="true"
-            />
+          {/* Placeholder décoratif : aria-hidden car aucune photo réelle disponible */}
+          <div className="artisan-detail__photo" aria-hidden="true">
+            <div className="artisan-detail__photo-placeholder" />
           </div>
           <div className="artisan-detail__info">
             <h1 className="artisan-detail__nom">{artisan.nom}</h1>
@@ -110,6 +116,7 @@ function ArtisanDetail() {
                 className="artisan-detail__site"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={"Visiter le site web de " + artisan.nom + " (s'ouvre dans un nouvel onglet)"}
               >
                 {artisan.site_web}
               </a>
@@ -177,13 +184,23 @@ function ArtisanDetail() {
                 rows={4}
                 aria-label="Votre message"
               />
+              {/* role="status" + aria-live="polite" : annoncé automatiquement par les screen readers (WCAG 4.1.3) */}
               {formStatus === "success" && (
-                <p className="artisan-detail__form-success">
+                <p
+                  className="artisan-detail__form-success"
+                  role="status"
+                  aria-live="polite"
+                >
                   Message envoyé avec succès !
                 </p>
               )}
+              {/* role="alert" + aria-live="assertive" : annoncé immédiatement par les screen readers */}
               {formStatus === "error" && (
-                <p className="artisan-detail__form-error">
+                <p
+                  className="artisan-detail__form-error"
+                  role="alert"
+                  aria-live="assertive"
+                >
                   Une erreur est survenue. Réessayez.
                 </p>
               )}

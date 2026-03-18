@@ -15,14 +15,22 @@ main { min-height: 60vh; background-color: #f1f8fc; }
   &:focus { top: 0; }
 }
 
+// ── Focus visible (WCAG 2.4.7) ────────────────────────────────
+// Affiche un contour clair pour la navigation clavier, masqué au clic souris
+:focus-visible {
+  outline: 3px solid #0074c7;
+  outline-offset: 2px;
+}
+
 // ── Fil d'Ariane ──────────────────────────────────────────────
+// Couleur #595959 sur blanc = ratio 6.08:1 (WCAG AA : 4.5:1 requis) ✓
 .breadcrumb {
   font-size: 0.8rem;
-  color: #9ca3af;
+  color: #595959;
   margin-bottom: 0.5rem;
 
   a {
-    color: #9ca3af;
+    color: #595959;
     text-decoration: underline;
     &:hover { color: #0074c7; }
   }
@@ -37,7 +45,7 @@ main { min-height: 60vh; background-color: #f1f8fc; }
 }
 
 .star--full  { color: #f59e0b; }
-.star--empty { color: #e5e7eb; }
+.star--empty { color: #e5e7eb; } // décoratif, exempt de contraste (aria-hidden="true")
 
 // ── Carte artisan (liste) ─────────────────────────────────────
 .artisan-card {

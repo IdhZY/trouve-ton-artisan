@@ -7,12 +7,14 @@ import {
 } from "../../services/api";
 import "./ArtisanList.scss";
 
+// role="img" + aria-hidden sur les ★ pour éviter la lecture "étoile noire x5" par les screen readers
 function StarRating({ note }) {
   return (
-    <div className="stars" aria-label={"Note : " + note + " sur 5"}>
+    <div className="stars" role="img" aria-label={"Note : " + note + " sur 5"}>
       {[1, 2, 3, 4, 5].map((i) => (
         <span
           key={i}
+          aria-hidden="true"
           className={
             i <= Math.round(note) ? "star star--full" : "star star--empty"
           }
@@ -41,13 +43,11 @@ function ArtisanList() {
     setCategorie(null);
 
     if (isSearch) {
-      // Mode recherche : /recherche?q=...
       searchArtisans(searchQuery)
         .then((data) => setArtisans(data))
         .catch(() => setError("Impossible d'effectuer la recherche."))
         .finally(() => setLoading(false));
     } else {
-      // Mode catégorie : /categorie/:slug
       fetchCategories()
         .then((cats) => {
           const cat = cats.find((c) => c.id === parseInt(slug));
@@ -74,6 +74,17 @@ function ArtisanList() {
       ? categorie.nom
       : "Catégorie";
 
+  // Titre dynamique de page (WCAG 2.4.2)
+  useEffect(() => {
+    if (isSearch && searchQuery) {
+      document.title = 'Recherche "' + searchQuery + '" — Trouve ton Artisan';
+    } else if (categorie) {
+      document.title = categorie.nom + " — Trouve ton Artisan";
+    } else {
+      document.title = "Artisans — Trouve ton Artisan";
+    }
+  }, [isSearch, searchQuery, categorie]);
+
   return (
     <div className="artisan-list">
       <div className="artisan-list__container">
@@ -96,7 +107,8 @@ function ArtisanList() {
               className="artisan-card"
               aria-label={"Voir la fiche de " + a.nom}
             >
-              <h2 className="artisan-card__nom">{a.nom}</h2>
+              {/* h3 : h1 = titre page, h2 absent, noms d'artisans au niveau 3 */}
+              <h3 className="artisan-card__nom">{a.nom}</h3>
               <StarRating note={a.note} />
               <p className="artisan-card__specialite">
                 {a.Specialite ? a.Specialite.nom : ""}

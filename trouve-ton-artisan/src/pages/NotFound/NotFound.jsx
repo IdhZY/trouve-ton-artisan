@@ -1,7 +1,13 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./NotFound.scss";
 
 function NotFound() {
+  // Titre dynamique de page (WCAG 2.4.2)
+  useEffect(() => {
+    document.title = "Page non trouvée (404) — Trouve ton Artisan";
+  }, []);
+
   return (
     <div className="not-found">
       <div className="not-found__container">

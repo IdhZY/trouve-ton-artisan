@@ -167,6 +167,7 @@ function Header() {
 
         {/* Burger mobile */}
         <button
+          type="button"
           className={
             "site-header__burger" +
             (menuOpen ? " site-header__burger--open" : "")

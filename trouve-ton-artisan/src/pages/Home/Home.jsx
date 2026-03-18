@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { fetchArtisansDuMois } from "../../services/api";
 import "./Home.scss";
 
+// role="img" + aria-hidden sur les ★ pour éviter la lecture "étoile noire x5" par les screen readers
 function StarRating({ note }) {
   return (
-    <div className="stars" aria-label={"Note : " + note + " sur 5"}>
+    <div className="stars" role="img" aria-label={"Note : " + note + " sur 5"}>
       {[1, 2, 3, 4, 5].map((i) => (
         <span
           key={i}
+          aria-hidden="true"
           className={
             i <= Math.round(note) ? "star star--full" : "star star--empty"
           }
@@ -24,6 +26,10 @@ function Home() {
   const [artisans, setArtisans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    document.title = "Accueil — Trouve ton Artisan";
+  }, []);
 
   useEffect(() => {
     fetchArtisansDuMois()

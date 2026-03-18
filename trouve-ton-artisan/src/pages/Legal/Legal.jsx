@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Legal.scss";
 
@@ -10,6 +11,11 @@ const pages = {
 
 function Legal({ page }) {
   const titre = pages[page] || "Page légale";
+
+  // Titre dynamique de page (WCAG 2.4.2)
+  useEffect(() => {
+    document.title = titre + " — Trouve ton Artisan";
+  }, [titre]);
 
   return (
     <div className="legal">
