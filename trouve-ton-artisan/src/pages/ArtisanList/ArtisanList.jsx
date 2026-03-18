@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { fetchArtisansByCategorie, fetchCategories } from "../../services/api";
+import { Link, useParams, useSearchParams } from "react-router-dom";
+import {
+  fetchArtisansByCategorie,
+  fetchCategories,
+  searchArtisans,
+} from "../../services/api";
 import "./ArtisanList.scss";
 
 function StarRating({ note }) {
@@ -22,6 +26,10 @@ function StarRating({ note }) {
 
 function ArtisanList() {
   const { slug } = useParams();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get("q");
+  const isSearch = !slug && !!searchQuery;
+
   const [artisans, setArtisans] = useState([]);
   const [categorie, setCategorie] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -30,21 +38,41 @@ function ArtisanList() {
   useEffect(() => {
     setLoading(true);
     setError(null);
+    setCategorie(null);
 
-    // Charger le nom de la catégorie
-    fetchCategories()
-      .then((cats) => {
-        const cat = cats.find((c) => c.id === parseInt(slug));
-        setCategorie(cat || null);
-      })
-      .catch(() => {});
+    if (isSearch) {
+      // Mode recherche : /recherche?q=...
+      searchArtisans(searchQuery)
+        .then((data) => setArtisans(data))
+        .catch(() => setError("Impossible d'effectuer la recherche."))
+        .finally(() => setLoading(false));
+    } else {
+      // Mode catégorie : /categorie/:slug
+      fetchCategories()
+        .then((cats) => {
+          const cat = cats.find((c) => c.id === parseInt(slug));
+          setCategorie(cat || null);
+        })
+        .catch(() => {});
 
-    // Charger les artisans
-    fetchArtisansByCategorie(slug)
-      .then((data) => setArtisans(data))
-      .catch(() => setError("Impossible de charger les artisans."))
-      .finally(() => setLoading(false));
-  }, [slug]);
+      fetchArtisansByCategorie(slug)
+        .then((data) => setArtisans(data))
+        .catch(() => setError("Impossible de charger les artisans."))
+        .finally(() => setLoading(false));
+    }
+  }, [slug, isSearch, searchQuery]);
+
+  const pageTitle = isSearch
+    ? 'Résultats pour "' + searchQuery + '"'
+    : categorie
+      ? categorie.nom.toUpperCase()
+      : "Chargement...";
+
+  const breadcrumbLabel = isSearch
+    ? "Recherche"
+    : categorie
+      ? categorie.nom
+      : "Catégorie";
 
   return (
     <div className="artisan-list">
@@ -52,14 +80,10 @@ function ArtisanList() {
         <nav className="breadcrumb" aria-label="Fil d'Ariane">
           <Link to="/">Accueil</Link>
           <span aria-hidden="true"> → </span>
-          <span aria-current="page">
-            {categorie ? categorie.nom : "Catégorie"}
-          </span>
+          <span aria-current="page">{breadcrumbLabel}</span>
         </nav>
 
-        <h1 className="artisan-list__title">
-          {categorie ? categorie.nom.toUpperCase() : "Chargement..."}
-        </h1>
+        <h1 className="artisan-list__title">{pageTitle}</h1>
 
         {loading && <p className="artisan-list__loading">Chargement...</p>}
         {error && <p className="artisan-list__error">{error}</p>}
@@ -78,7 +102,7 @@ function ArtisanList() {
                 {a.Specialite ? a.Specialite.nom : ""}
               </p>
               <p className="artisan-card__localisation">
-                {a.ville}, {a.code_postal}
+                {a.ville}{a.code_postal ? ", " + a.code_postal : ""}
               </p>
             </Link>
           ))}

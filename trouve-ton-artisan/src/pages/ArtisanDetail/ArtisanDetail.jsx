@@ -102,7 +102,7 @@ function ArtisanDetail() {
               {artisan.Specialite ? artisan.Specialite.nom : ""}
             </p>
             <p className="artisan-detail__ville">
-              {artisan.ville}, {artisan.code_postal}
+              {artisan.ville}{artisan.code_postal ? ", " + artisan.code_postal : ""}
             </p>
             {artisan.site_web && (
               <a

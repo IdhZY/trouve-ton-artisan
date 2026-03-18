@@ -2,6 +2,7 @@
 body { margin: 0; font-family: 'Helvetica Neue', Arial, sans-serif; color: #384050; background: #fff; }
 a { color: #0074c7; text-decoration: none; }
 main { min-height: 60vh; background-color: #f1f8fc; }
+
 .skip-link {
   position: absolute;
   top: -100%;
@@ -12,4 +13,72 @@ main { min-height: 60vh; background-color: #f1f8fc; }
   font-weight: 600;
   z-index: 9999;
   &:focus { top: 0; }
+}
+
+// ── Fil d'Ariane ──────────────────────────────────────────────
+.breadcrumb {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+
+  a {
+    color: #9ca3af;
+    text-decoration: underline;
+    &:hover { color: #0074c7; }
+  }
+}
+
+// ── Étoiles de notation ───────────────────────────────────────
+.stars {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  font-size: 1.1rem;
+}
+
+.star--full  { color: #f59e0b; }
+.star--empty { color: #e5e7eb; }
+
+// ── Carte artisan (liste) ─────────────────────────────────────
+.artisan-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  color: #384050;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+    transform: translateY(-2px);
+  }
+}
+
+.artisan-card__nom {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #384050;
+  text-align: center;
+}
+
+.artisan-card__specialite {
+  font-size: 0.85rem;
+  color: #0074c7;
+  margin: 0;
+  text-align: center;
+  font-weight: 500;
+}
+
+.artisan-card__localisation {
+  font-size: 0.8rem;
+  color: #384050;
+  margin: 0.25rem 0 0;
+  text-align: center;
 }

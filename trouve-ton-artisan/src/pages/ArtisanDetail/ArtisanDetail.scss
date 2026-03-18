@@ -264,17 +264,5 @@
   color: rgba(255, 255, 255, 0.4);
 }
 
-.breadcrumb {
-  font-size: 0.8rem;
-  color: #9ca3af;
-  margin-bottom: 1rem;
-}
-
-.breadcrumb a {
-  color: #9ca3af;
-  text-decoration: underline;
-}
-
-.breadcrumb a:hover {
-  color: #0074c7;
-}
+// Surcharge du margin pour la page détail
+.breadcrumb { margin-bottom: 1rem; }

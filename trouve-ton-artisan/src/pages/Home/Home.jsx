@@ -84,7 +84,7 @@ function Home() {
                   {a.Specialite ? a.Specialite.nom : ""}
                 </p>
                 <p className="artisan-card__localisation">
-                  {a.ville}, {a.code_postal}
+                  {a.ville}{a.code_postal ? ", " + a.code_postal : ""}
                 </p>
               </Link>
             ))}
