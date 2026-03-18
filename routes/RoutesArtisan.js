@@ -89,15 +89,6 @@ router.post("/:id/contact", async (req, res) => {
       return res.status(404).json({ message: "Artisan non trouvé." });
     }
 
-    const transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: process.env.MAIL_PORT,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-    });
-
     await transporter.sendMail({
       from: '"Trouve ton Artisan" <' + process.env.MAIL_USER + ">",
       to: artisan.email,

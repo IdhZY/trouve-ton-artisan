@@ -7,7 +7,14 @@ const apiKeyAuth = require("./middleware/auth");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://trouve-ton-artisan-liart.vercel.app",
+    ],
+  }),
+);
 app.use(express.json());
 app.use(apiKeyAuth);
 

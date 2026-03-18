@@ -22,6 +22,10 @@ const Artisan = sequelize.define(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
+    code_postal: {
+      type: DataTypes.STRING(10),
+      allowNull: true,
+    },
     a_propos: {
       type: DataTypes.TEXT,
       allowNull: true,
