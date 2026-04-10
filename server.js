@@ -6,29 +6,32 @@ const { sequelize } = require("./models");
 const artisansRouter = require("./routes/artisan");
 const apiKeyAuth = require("./middleware/auth");
 
+// ─── Configuration ───────────────────────────────────────────────
+const app = express();
+const PORT = process.env.PORT || 3000;
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
-  message: { error: "Trop de requêtes, réessaye dans 15 minutes." }
+  message: { error: "Trop de requêtes, réessaye dans 15 minutes." },
 });
 
-const app = express();
-
+// ─── Middlewares ──────────────────────────────────────────────────
 app.use(limiter);
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
-
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 app.use(apiKeyAuth);
 
+// ─── Routes ───────────────────────────────────────────────────────
 app.use("/api/artisans", artisansRouter);
 
-const PORT = process.env.PORT || 3000;
-
+// ─── Démarrage ────────────────────────────────────────────────────
 sequelize
   .authenticate()
   .then(() => {
-    app.listen(PORT, () => console.log(`🚀 Port ${PORT}`));
+    console.log("✅ Connexion à la base de données réussie !");
+    app.listen(PORT, () => console.log(`🚀 Serveur lancé sur le port ${PORT}`));
   })
   .catch((err) => {
     console.error("❌ BDD inaccessible, arrêt.", err.message);
