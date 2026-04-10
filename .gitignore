@@ -1,3 +1,4 @@
 node_modules/
 .env
 .env.*
+ALLOWED_ORIGINS=http://localhost:5173, https://trouvetonartisan.com

@@ -1,21 +1,23 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const cors = require("cors");
 require("dotenv").config();
 const { sequelize } = require("./models");
 const artisansRouter = require("./routes/artisan");
 const apiKeyAuth = require("./middleware/auth");
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: "Trop de requêtes, réessaye dans 15 minutes." }
+});
+
 const app = express();
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://trouve-ton-artisan-liart.vercel.app",
-      "https://my-project-pi-neon.vercel.app",
-    ],
-  }),
-);
+app.use(limiter);
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
+
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 app.use(apiKeyAuth);
 
@@ -23,17 +25,12 @@ app.use("/api/artisans", artisansRouter);
 
 const PORT = process.env.PORT || 3000;
 
-// Démarrer le serveur immédiatement
-app.listen(PORT, () => {
-  console.log(`🚀 Serveur lancé sur le port ${PORT}`);
-});
-
-// Vérifier la connexion BDD après
 sequelize
   .authenticate()
   .then(() => {
-    console.log("✅ Connexion à la base de données réussie !");
+    app.listen(PORT, () => console.log(`🚀 Port ${PORT}`));
   })
   .catch((err) => {
-    console.error("❌ Erreur de connexion :", err.message);
+    console.error("❌ BDD inaccessible, arrêt.", err.message);
+    process.exit(1);
   });
