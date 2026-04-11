@@ -12,7 +12,7 @@ const sequelize = new Sequelize(
     logging: false,
     dialectOptions: {
       ssl: {
-        rejectUnauthorized: true,
+        rejectUnauthorized: false,
       },
     },
   },
