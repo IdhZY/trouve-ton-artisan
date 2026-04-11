@@ -39,15 +39,16 @@ const Artisan = sequelize.define(
       allowNull: true,
     },
     top_artisan: {
-      type: DataTypes.TINYINT,
+      type: DataTypes.BOOLEAN,
       allowNull: false,
-      defaultValue: 0,
+      defaultValue: false,
     },
     id_specialite: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
     },
   },
+
   {
     tableName: "artisan",
     timestamps: false,
