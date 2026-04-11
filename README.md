@@ -1,10 +1,29 @@
 # Trouve ton Artisan 🔨
 
-Plateforme dédiée aux artisans de la région Auvergne-Rhône-Alpes, permettant aux particuliers de trouver un artisan et de le contacter facilement.
+Plateforme web permettant aux particuliers de la région **Auvergne-Rhône-Alpes** de trouver un artisan par catégorie, spécialité ou nom, de consulter sa fiche et de le contacter directement par email.
+
+> **Stack** : Node.js · Express · Sequelize · MySQL · Nodemailer  
+> **Front-end** : [trouve-ton-artisan-client](#) _(React 18 · React Router v6 · Bootstrap · Sass)_
 
 ---
 
-## 📋 Prérequis
+## Architecture
+
+```
+trouve-ton-artisan/        ← Back-end (ce repo)
+│
+├── config/                ← Connexion base de données
+├── middleware/            ← Authentification par clé API
+├── models/                ← Modèles Sequelize (Artisan, Categorie, Specialite)
+├── routes/                ← Endpoints REST
+├── server.js              ← Point d'entrée
+├── 01_create_database.sql ← Script de création BDD
+└── 02_seed_database.sql   ← Script de données initiales
+```
+
+---
+
+## Prérequis
 
 - Node.js v18+
 - MySQL 8+
@@ -12,7 +31,7 @@ Plateforme dédiée aux artisans de la région Auvergne-Rhône-Alpes, permettant
 
 ---
 
-## ⚙️ Installation et lancement
+## Installation
 
 ### 1. Cloner le projet
 
@@ -23,81 +42,91 @@ cd trouve-ton-artisan
 
 ### 2. Base de données
 
-Importe les scripts SQL dans MySQL :
-
 ```bash
-mysql -u root -p < database/create.sql
-mysql -u root -p < database/seed.sql
+mysql -u root -p < 01_create_database.sql
+mysql -u root -p < 02_seed_database.sql
 ```
 
-### 3. Backend
+### 3. Variables d'environnement
+
+```bash
+cp .env.example .env
+```
+
+Renseigne les valeurs dans `.env` :
+
+| Variable          | Description              | Exemple                 |
+| ----------------- | ------------------------ | ----------------------- |
+| `DB_HOST`         | Hôte MySQL               | `localhost`             |
+| `DB_PORT`         | Port MySQL               | `3306`                  |
+| `DB_NAME`         | Nom de la base           | `trouve_ton_artisan`    |
+| `DB_USER`         | Utilisateur MySQL        | `root`                  |
+| `DB_PASSWORD`     | Mot de passe MySQL       | `password`              |
+| `PORT`            | Port du serveur          | `3000`                  |
+| `API_KEY`         | Clé d'auth API           | `tta_xxxxx`             |
+| `MAIL_HOST`       | Serveur SMTP             | `smtp.gmail.com`        |
+| `MAIL_PORT`       | Port SMTP                | `587`                   |
+| `MAIL_USER`       | Email expéditeur         | `email@gmail.com`       |
+| `MAIL_PASS`       | Mot de passe application | `xxxxxxxxxxxx`          |
+| `ALLOWED_ORIGINS` | Origines CORS autorisées | `http://localhost:5173` |
+
+### 4. Lancer le serveur
 
 ```bash
 npm install
-cp .env.example .env
-npm run dev
+npm run dev     # développement (nodemon)
+npm start       # production
 ```
 
-Le backend tourne sur **http://localhost:3000**
+Le serveur tourne sur **http://localhost:3000**
 
-### 4. Frontend
+---
+
+## API
+
+Toutes les routes nécessitent le header suivant :
+
+```
+x-api-key: <votre_clé>
+```
+
+| Méthode | Route                          | Description                    |
+| ------- | ------------------------------ | ------------------------------ |
+| GET     | `/api/artisans`                | Liste de tous les artisans     |
+| GET     | `/api/artisans/categories`     | Liste des catégories           |
+| GET     | `/api/artisans/top/artisans`   | Top 3 artisans mis en avant    |
+| GET     | `/api/artisans/categorie/:id`  | Artisans filtrés par catégorie |
+| GET     | `/api/artisans/recherche/:nom` | Recherche par nom              |
+| GET     | `/api/artisans/:id`            | Fiche détaillée d'un artisan   |
+| POST    | `/api/artisans/:id/contact`    | Envoyer un email à un artisan  |
+
+### Exemple de requête
 
 ```bash
-cd trouve-ton-artisan
-npm install
-cp .env.example .env
-npm run dev
+curl -H "x-api-key: tta_xxxxx" http://localhost:3000/api/artisans/categories
 ```
 
-Le frontend tourne sur **http://localhost:5173**
+### Exemple de réponse
+
+```json
+[
+  { "id": 1, "nom": "Maçonnerie" },
+  { "id": 2, "nom": "Plomberie" }
+]
+```
 
 ---
 
-## 🔑 Variables d'environnement
+## Sécurité
 
-### Backend (.env)
-
-| Variable      | Description                | Exemple              |
-| ------------- | -------------------------- | -------------------- |
-| `DB_HOST`     | Hôte MySQL                 | `localhost`          |
-| `DB_PORT`     | Port MySQL                 | `3306`               |
-| `DB_NAME`     | Nom de la base             | `trouve_ton_artisan` |
-| `DB_USER`     | Utilisateur MySQL          | `root`               |
-| `DB_PASSWORD` | Mot de passe MySQL         | `password`           |
-| `PORT`        | Port du serveur            | `3000`               |
-| `API_KEY`     | Clé d'authentification API | `tta_xxx`            |
-| `MAIL_HOST`   | Serveur SMTP               | `smtp.gmail.com`     |
-| `MAIL_PORT`   | Port SMTP                  | `587`                |
-| `MAIL_USER`   | Email expéditeur           | `email@gmail.com`    |
-| `MAIL_PASS`   | Mot de passe application   | `xxxxxxxxxxxx`       |
-
-### Frontend (.env)
-
-| Variable       | Description            | Exemple                     |
-| -------------- | ---------------------- | --------------------------- |
-| `VITE_API_URL` | URL de l'API           | `http://localhost:3000/api` |
-| `VITE_API_KEY` | Clé d'authentification | `tta_xxx`                   |
+- Authentification par clé API sur toutes les routes
+- Rate limiting global (100 req / 15 min)
+- Rate limiting renforcé sur le formulaire de contact (5 req / 15 min)
+- Échappement HTML sur les données utilisateur (protection XSS)
+- Variables sensibles isolées dans `.env` (non versionné)
 
 ---
 
-## 🛠️ Technologies utilisées
+## Auteur
 
-**Frontend** : React 18, React Router v6, Bootstrap, Sass
-
-**Backend** : Node.js, Express, Sequelize, MySQL, Nodemailer
-
----
-
-## 📄 Routes API
-
-Toutes les routes nécessitent le header `x-api-key`.
-
-| Méthode | Route                          | Description                  |
-| ------- | ------------------------------ | ---------------------------- |
-| GET     | `/api/artisans`                | Tous les artisans            |
-| GET     | `/api/artisans/top/artisans`   | Artisans du mois             |
-| GET     | `/api/artisans/categories`     | Toutes les catégories        |
-| GET     | `/api/artisans/categorie/:id`  | Artisans par catégorie       |
-| GET     | `/api/artisans/recherche/:nom` | Recherche par nom            |
-| GET     | `/api/artisans/:id`            | Fiche d'un artisan           |
-| POST    | `/api/artisans/:id/contact`    | Envoyer un email à l'artisan |
+**Florent Vidal** — [GitHub](https://github.com/ton-username)
