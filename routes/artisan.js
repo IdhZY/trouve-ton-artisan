@@ -2,12 +2,23 @@ const express = require("express");
 const router = express.Router();
 const { Op } = require("sequelize");
 const nodemailer = require("nodemailer");
-const rateLimit = require("express-rate-limit");
+const { rateLimit } = require("express-rate-limit");
 const Artisan = require("../models/artisan");
 const Categorie = require("../models/categorie");
 const Specialite = require("../models/specialite");
 
-// Limite : 5 requêtes par IP toutes les 15 minutes sur le formulaire de contact
+/**
+ * @param {string} str
+ * @returns {string}
+ */
+const escapeHtml = (str) =>
+  String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
+// Limite requete contact pour éviter spam
 const contactLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
@@ -18,7 +29,7 @@ const contactLimiter = rateLimit({
 
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
-  port: parseInt(process.env.MAIL_PORT),
+  port: parseInt(process.env.MAIL_PORT || "587"),
   secure: false,
   auth: {
     user: process.env.MAIL_USER,
@@ -35,7 +46,8 @@ router.get("/categories", async (req, res) => {
     const categories = await Categorie.findAll({ order: [["nom", "ASC"]] });
     res.json(categories);
   } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 });
 
@@ -49,7 +61,22 @@ router.get("/top/artisans", async (req, res) => {
     });
     res.json(artisans);
   } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+});
+
+// GET /api/artisans/recherche/:nom
+router.get("/recherche/:nom", async (req, res) => {
+  try {
+    const artisans = await Artisan.findAll({
+      where: { nom: { [Op.like]: "%" + req.params.nom + "%" } },
+      include: [{ model: Specialite }],
+    });
+    res.json(artisans);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 });
 
@@ -66,20 +93,8 @@ router.get("/categorie/:id", async (req, res) => {
     });
     res.json(artisans);
   } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error: error.message });
-  }
-});
-
-// GET /api/artisans/recherche/:nom
-router.get("/recherche/:nom", async (req, res) => {
-  try {
-    const artisans = await Artisan.findAll({
-      where: { nom: { [Op.like]: "%" + req.params.nom + "%" } },
-      include: [{ model: Specialite }],
-    });
-    res.json(artisans);
-  } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 });
 
@@ -94,40 +109,29 @@ router.post("/:id/contact", contactLimiter, async (req, res) => {
         .json({ message: "Tous les champs sont obligatoires." });
     }
 
-    const artisan = await Artisan.findByPk(req.params.id);
+    const artisan = await Artisan.findByPk(String(req.params.id));
     if (!artisan) {
       return res.status(404).json({ message: "Artisan non trouvé." });
     }
 
     await transporter.sendMail({
       from: '"Trouve ton Artisan" <' + process.env.MAIL_USER + ">",
-      to: artisan.email,
+      to: String(artisan.get("email")),
       subject: objet,
-      html:
-        "<p><strong>Message de :</strong> " +
-        nom +
-        " (" +
-        email +
-        ")</p>" +
-        "<p><strong>Objet :</strong> " +
-        objet +
-        "</p>" +
-        "<hr/>" +
-        "<p>" +
-        message.replace(/\n/g, "<br>") +
-        "</p>",
+      html: `<p><strong>Message de :</strong> ${escapeHtml(nom)} (${escapeHtml(email)})</p>
+       <p><strong>Objet :</strong> ${escapeHtml(objet)}</p>
+       <hr/>
+       <p>${escapeHtml(message).replace(/\n/g, "<br>")}</p>`,
     });
 
     res.json({ success: true, message: "Email envoyé avec succès." });
   } catch (error) {
     console.error("Erreur envoi email :", error);
-    res
-      .status(500)
-      .json({ message: "Erreur lors de l'envoi.", error: error.message });
+    res.status(500).json({ message: "Erreur serveur" });
   }
 });
 
-// GET /api/artisans/:id  — doit être après les routes spécifiques
+// GET /api/artisans/:id
 router.get("/:id", async (req, res) => {
   try {
     const artisan = await Artisan.findByPk(req.params.id, {
@@ -137,7 +141,8 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ message: "Artisan non trouvé" });
     res.json(artisan);
   } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 });
 
@@ -149,7 +154,8 @@ router.get("/", async (req, res) => {
     });
     res.json(artisans);
   } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
 });
 
