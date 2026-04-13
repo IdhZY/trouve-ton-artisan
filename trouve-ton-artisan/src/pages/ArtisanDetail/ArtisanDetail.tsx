@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchArtisan, sendContactForm } from "../../services/api";
+import type { Artisan } from "../../types";
 import "./ArtisanDetail.scss";
 
-// role="img" + aria-hidden sur les ★ pour éviter la lecture "étoile noire x5" par les screen readers
-function StarRating({ note }) {
+function StarRating({ note }: { note: number }) {
   return (
     <div className="stars" role="img" aria-label={"Note : " + note + " sur 5"}>
       {[1, 2, 3, 4, 5].map((i) => (
@@ -22,29 +22,36 @@ function StarRating({ note }) {
   );
 }
 
-function ArtisanDetail() {
-  const { id } = useParams();
-  const [artisan, setArtisan] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+interface ContactForm {
+  nom: string;
+  email: string;
+  objet: string;
+  message: string;
+  [key: string]: string;
+}
 
-  const [form, setForm] = useState({
+function ArtisanDetail() {
+  const { id } = useParams<{ id: string }>();
+  const [artisan, setArtisan] = useState<Artisan | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [form, setForm] = useState<ContactForm>({
     nom: "",
     email: "",
     objet: "",
     message: "",
   });
-  const [formStatus, setFormStatus] = useState(null);
+  const [formStatus, setFormStatus] = useState<"success" | "error" | null>(null);
   const [formLoading, setFormLoading] = useState(false);
 
   useEffect(() => {
-    fetchArtisan(id)
+    fetchArtisan(Number(id))
       .then((data) => setArtisan(data))
       .catch(() => setError("Artisan introuvable."))
       .finally(() => setLoading(false));
   }, [id]);
 
-  // Titre dynamique de page (WCAG 2.4.2)
   useEffect(() => {
     if (artisan) {
       document.title = artisan.nom + " — Trouve ton Artisan";
@@ -53,16 +60,16 @@ function ArtisanDetail() {
     }
   }, [artisan, error]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormLoading(true);
     setFormStatus(null);
     try {
-      await sendContactForm(id, form);
+      await sendContactForm(Number(id), form);
       setFormStatus("success");
       setForm({ nom: "", email: "", objet: "", message: "" });
     } catch {
@@ -84,20 +91,16 @@ function ArtisanDetail() {
           <Link to="/">Accueil</Link>
           <span aria-hidden="true"> → </span>
           <Link
-            to={
-              "/categorie/" +
-              (artisan.Specialite ? artisan.Specialite.id_categorie : "")
-            }
-          >
+            to={"/categorie/" +
+            (artisan.Specialite ? artisan.Specialite.id_categorie : "")}>
+
             {artisan.Specialite ? artisan.Specialite.nom : "Catégorie"}
           </Link>
           <span aria-hidden="true"> → </span>
           <span aria-current="page">{artisan.nom}</span>
         </nav>
 
-        {/* Card identité */}
         <div className="artisan-detail__identity">
-          {/* Placeholder décoratif : aria-hidden car aucune photo réelle disponible */}
           <div className="artisan-detail__photo" aria-hidden="true">
             <div className="artisan-detail__photo-placeholder" />
           </div>
@@ -108,23 +111,26 @@ function ArtisanDetail() {
               {artisan.Specialite ? artisan.Specialite.nom : ""}
             </p>
             <p className="artisan-detail__ville">
-              {artisan.ville}{artisan.code_postal ? ", " + artisan.code_postal : ""}
+              {artisan.ville}
+              {artisan.code_postal ? ", " + artisan.code_postal : ""}
             </p>
             {artisan.site_web && (
-              <a
-                href={artisan.site_web}
-                className="artisan-detail__site"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={"Visiter le site web de " + artisan.nom + " (s'ouvre dans un nouvel onglet)"}
-              >
-                {artisan.site_web}
-              </a>
-            )}
+              
+                <a
+                  href={artisan.site_web}
+                  className="artisan-detail__site"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={
+                    "Visiter le site web de " +
+                    artisan.nom +
+                    " (s'ouvre dans un nouvel onglet)"}>
+                  {artisan.site_web}
+                </a>
+              )}            
           </div>
         </div>
 
-        {/* Card à propos + contact */}
         <div className="artisan-detail__bottom">
           <div className="artisan-detail__apropos">
             <h2 className="artisan-detail__apropos-titre">À propos</h2>
@@ -184,7 +190,6 @@ function ArtisanDetail() {
                 rows={4}
                 aria-label="Votre message"
               />
-              {/* role="status" + aria-live="polite" : annoncé automatiquement par les screen readers (WCAG 4.1.3) */}
               {formStatus === "success" && (
                 <p
                   className="artisan-detail__form-success"
@@ -194,7 +199,6 @@ function ArtisanDetail() {
                   Message envoyé avec succès !
                 </p>
               )}
-              {/* role="alert" + aria-live="assertive" : annoncé immédiatement par les screen readers */}
               {formStatus === "error" && (
                 <p
                   className="artisan-detail__form-error"

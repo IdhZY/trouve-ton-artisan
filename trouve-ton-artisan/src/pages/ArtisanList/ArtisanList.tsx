@@ -5,10 +5,15 @@ import {
   fetchCategories,
   searchArtisans,
 } from "../../services/api";
+import type { Artisan } from "../../types";
 import "./ArtisanList.scss";
 
-// role="img" + aria-hidden sur les ★ pour éviter la lecture "étoile noire x5" par les screen readers
-function StarRating({ note }) {
+interface Categorie {
+  id: number;
+  nom: string;
+}
+
+function StarRating({ note }: { note: number }) {
   return (
     <div className="stars" role="img" aria-label={"Note : " + note + " sur 5"}>
       {[1, 2, 3, 4, 5].map((i) => (
@@ -27,35 +32,35 @@ function StarRating({ note }) {
 }
 
 function ArtisanList() {
-  const { slug } = useParams();
+  const { slug } = useParams<{ slug: string }>();
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("q");
   const isSearch = !slug && !!searchQuery;
 
-  const [artisans, setArtisans] = useState([]);
-  const [categorie, setCategorie] = useState(null);
+  const [artisans, setArtisans] = useState<Artisan[]>([]);
+  const [categorie, setCategorie] = useState<Categorie | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
     setError(null);
     setCategorie(null);
 
-    if (isSearch) {
+    if (isSearch && searchQuery) {
       searchArtisans(searchQuery)
         .then((data) => setArtisans(data))
         .catch(() => setError("Impossible d'effectuer la recherche."))
         .finally(() => setLoading(false));
-    } else {
+    } else if (slug) {
       fetchCategories()
         .then((cats) => {
-          const cat = cats.find((c) => c.id === parseInt(slug));
+          const cat = cats.find((c: Categorie) => c.id === parseInt(slug));
           setCategorie(cat || null);
         })
         .catch(() => {});
 
-      fetchArtisansByCategorie(slug)
+      fetchArtisansByCategorie(parseInt(slug))
         .then((data) => setArtisans(data))
         .catch(() => setError("Impossible de charger les artisans."))
         .finally(() => setLoading(false));
@@ -74,7 +79,6 @@ function ArtisanList() {
       ? categorie.nom
       : "Catégorie";
 
-  // Titre dynamique de page (WCAG 2.4.2)
   useEffect(() => {
     if (isSearch && searchQuery) {
       document.title = 'Recherche "' + searchQuery + '" — Trouve ton Artisan';
@@ -107,14 +111,14 @@ function ArtisanList() {
               className="artisan-card"
               aria-label={"Voir la fiche de " + a.nom}
             >
-              {/* h3 : h1 = titre page, h2 absent, noms d'artisans au niveau 3 */}
               <h3 className="artisan-card__nom">{a.nom}</h3>
               <StarRating note={a.note} />
               <p className="artisan-card__specialite">
                 {a.Specialite ? a.Specialite.nom : ""}
               </p>
               <p className="artisan-card__localisation">
-                {a.ville}{a.code_postal ? ", " + a.code_postal : ""}
+                {a.ville}
+                {a.code_postal ? ", " + a.code_postal : ""}
               </p>
             </Link>
           ))}
@@ -123,4 +127,5 @@ function ArtisanList() {
     </div>
   );
 }
+
 export default ArtisanList;

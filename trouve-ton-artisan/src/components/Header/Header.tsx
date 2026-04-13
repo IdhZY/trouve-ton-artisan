@@ -1,17 +1,23 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchCategories, searchArtisans } from "../../services/api";
+import type { Artisan } from "../../types";
 import "./Header.scss";
 
+interface Categorie {
+  id: number;
+  nom: string;
+}
+
 function Header() {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Categorie[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<Artisan[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
-  const debounceRef = useRef(null);
-  const searchWrapperRef = useRef(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchCategories()
@@ -21,8 +27,11 @@ function Header() {
 
   useEffect(() => {
     if (!showDropdown) return;
-    const handleClickOutside = (e) => {
-      if (searchWrapperRef.current && !searchWrapperRef.current.contains(e.target)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        searchWrapperRef.current &&
+        !searchWrapperRef.current.contains(e.target as Node)
+      ) {
         setShowDropdown(false);
       }
     };
@@ -30,7 +39,7 @@ function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showDropdown]);
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchQuery(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -50,7 +59,7 @@ function Header() {
     }, 300);
   };
 
-  const handleSearchSubmit = (e) => {
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       setShowDropdown(false);
@@ -59,7 +68,7 @@ function Header() {
     }
   };
 
-  const handleResultClick = (id) => {
+  const handleResultClick = (id: number) => {
     setShowDropdown(false);
     setSearchQuery("");
     navigate("/artisan/" + id);
@@ -80,7 +89,6 @@ function Header() {
           </span>
         </Link>
 
-        {/* Nav inline sur desktop */}
         <nav
           className={
             "site-header__nav" + (menuOpen ? " site-header__nav--open" : "")
@@ -102,7 +110,6 @@ function Header() {
           </ul>
         </nav>
 
-        {/* Search desktop */}
         <div className="site-header__search-wrapper" ref={searchWrapperRef}>
           <form
             className="site-header__search"
@@ -118,6 +125,7 @@ function Header() {
               aria-label="Rechercher un artisan"
               autoComplete="off"
             />
+
             <button
               type="submit"
               className="site-header__search-btn"
@@ -165,7 +173,6 @@ function Header() {
           )}
         </div>
 
-        {/* Burger mobile */}
         <button
           type="button"
           className={
@@ -184,4 +191,5 @@ function Header() {
     </header>
   );
 }
+
 export default Header;

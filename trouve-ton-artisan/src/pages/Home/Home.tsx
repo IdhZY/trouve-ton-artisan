@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { fetchArtisansDuMois } from "../../services/api";
+import type { Artisan } from "../../types.ts";
 import "./Home.scss";
 
-// role="img" + aria-hidden sur les ★ pour éviter la lecture "étoile noire x5" par les screen readers
-function StarRating({ note }) {
+function StarRating({ note }: { note: number }) {
   return (
     <div className="stars" role="img" aria-label={"Note : " + note + " sur 5"}>
       {[1, 2, 3, 4, 5].map((i) => (
@@ -23,9 +23,9 @@ function StarRating({ note }) {
 }
 
 function Home() {
-  const [artisans, setArtisans] = useState([]);
+  const [artisans, setArtisans] = useState<Artisan[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     document.title = "Accueil — Trouve ton Artisan";
@@ -90,7 +90,8 @@ function Home() {
                   {a.Specialite ? a.Specialite.nom : ""}
                 </p>
                 <p className="artisan-card__localisation">
-                  {a.ville}{a.code_postal ? ", " + a.code_postal : ""}
+                  {a.ville}
+                  {a.code_postal ? ", " + a.code_postal : ""}
                 </p>
               </Link>
             ))}

@@ -2,17 +2,18 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Legal.scss";
 
-const pages = {
+type PageKey = "mentions-legales" | "donnees-personnelles" | "accessibilite" | "cookies";
+
+const pages: Record<PageKey, string> = {
   "mentions-legales": "Mentions légales",
   "donnees-personnelles": "Données personnelles",
   accessibilite: "Accessibilité",
   cookies: "Cookies",
 };
 
-function Legal({ page }) {
+function Legal({ page }: { page: PageKey }) {
   const titre = pages[page] || "Page légale";
 
-  // Titre dynamique de page (WCAG 2.4.2)
   useEffect(() => {
     document.title = titre + " — Trouve ton Artisan";
   }, [titre]);
@@ -25,9 +26,7 @@ function Legal({ page }) {
           <span aria-hidden="true"> → </span>
           <span aria-current="page">{titre}</span>
         </nav>
-
         <h1 className="legal__title">{titre}</h1>
-
         <div className="legal__content">
           <p className="legal__placeholder">Page en construction.</p>
         </div>
