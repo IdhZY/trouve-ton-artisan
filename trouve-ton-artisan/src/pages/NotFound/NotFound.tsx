@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./NotFound.css";
+import "./NotFound.scss";
 
 function NotFound() {
   // Titre dynamique de page (WCAG 2.4.2)
